@@ -1,8 +1,11 @@
 package com.spring.train.restservice.repository;
 
-import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
+import com.spring.train.restservice.entity.Employee;
+import org.springframework.data.cassandra.repository.CassandraRepository;
+import org.springframework.stereotype.Repository;
 
-@EnableCassandraRepositories
-public class CassandraRepository {
+@Repository
+public interface EmployeeRepository extends CassandraRepository<Employee, Long> {
 
+    Employee readFirstBy(Long id);
 }
