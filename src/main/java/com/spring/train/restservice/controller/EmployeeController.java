@@ -5,10 +5,14 @@ import com.spring.train.restservice.entity.Employee;
 import com.spring.train.restservice.repository.EmployeeRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.hateoas.core.DummyInvocationUtils.methodOn;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @RestController
 @Slf4j
@@ -29,11 +33,13 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees/{id}")
-    Employee one(@PathVariable Long id) {
+    Resource<Employee> one(@PathVariable Long id) {
         Optional<Employee> one = (repository.findById(id));
         if (one.isPresent()) {
             Employee findById = one.get();
-            return findById;
+            return new Resource<>(findById,
+                    linkTo(methodOn(EmployeeController.class).one(id)).withSelfRel(),
+                    linkTo(methodOn(EmployeeController.class).all()).withRel("employees"));
         } else {
             throw new EmployeeNotFoundException(id);
         }
