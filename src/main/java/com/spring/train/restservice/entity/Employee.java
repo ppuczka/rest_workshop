@@ -20,10 +20,29 @@ public class Employee {
     private Long id;
 
     @Column("name")
-    private String name;
+    private String firstName;
+
+    @Column("lastname")
+    private String lastName;
 
     @Column("rol")
     private String role;
+
+    public Employee(Long id, String firstName, String role) {
+        this.id = id;
+        this.firstName = firstName;
+        this.role = role;
+    }
+
+    public String getName() {
+        return this.firstName + " " + this.lastName;
+    }
+
+    public void setName(String name) {
+        String[] parts = name.split(" ");
+        this.firstName = parts[0];
+        this.lastName = parts[1];
+    }
 
 
 }
