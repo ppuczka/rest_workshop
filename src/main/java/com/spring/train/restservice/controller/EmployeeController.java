@@ -1,15 +1,18 @@
 package com.spring.train.restservice.controller;
 
 import com.spring.train.restservice.config.EmployeeNotFoundException;
+import com.spring.train.restservice.config.EmployeeResourceAssembler;
 import com.spring.train.restservice.entity.Employee;
 import com.spring.train.restservice.repository.EmployeeRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.core.DummyInvocationUtils.methodOn;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -20,10 +23,15 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 public class EmployeeController {
 
     private final EmployeeRepository repository;
+    private final EmployeeResourceAssembler assembler;
 
-    @GetMapping("/employees")
-    List<Employee> all() {
-        return repository.findAll();
+    @GetMapping("/employees") public Resources<Resource<Employee>> all() {
+        List<Resource<Employee>> employees = repository.findAll().stream()
+                .map(assembler::toResource)
+                .collect(Collectors.toList());
+
+        return new Resources<>(employees, linkTo(methodOn(EmployeeController.class).all()).withSelfRel());
+
     }
 
     @PostMapping("/employees")
@@ -32,14 +40,11 @@ public class EmployeeController {
 
     }
 
-    @GetMapping("/employees/{id}")
-    Resource<Employee> one(@PathVariable Long id) {
+    @GetMapping("/employees/{id}") public Resource<Employee> one(@PathVariable Long id) {
         Optional<Employee> one = (repository.findById(id));
         if (one.isPresent()) {
             Employee findById = one.get();
-            return new Resource<>(findById,
-                    linkTo(methodOn(EmployeeController.class).one(id)).withSelfRel(),
-                    linkTo(methodOn(EmployeeController.class).all()).withRel("employees"));
+            return assembler.toResource(findById);
         } else {
             throw new EmployeeNotFoundException(id);
         }
