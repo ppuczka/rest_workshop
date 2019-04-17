@@ -23,15 +23,17 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-cassandra'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
     compile group: 'com.datastax.cassandra', name: 'cassandra-driver-core', version: '3.7.1'
     compile group: 'org.springframework.data', name: 'spring-data-cassandra', version: '2.1.5.RELEASE'
     compile group: 'org.springframework.hateoas', name: 'spring-hateoas', version: '0.25.1.RELEASE'
     compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-config', version: '2.1.1.RELEASE'
-    
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-netflix-eureka-server', version: '2.1.1.RELEASE'    
 
 
 }
